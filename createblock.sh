@@ -26,7 +26,7 @@ for file in "${files[@]}"; do
     \$id = \$block['id'];
 
     // Path to Block-Element
-    \$blockPath = get_stylesheet_directory_uri() . "/blocks/" . \$element;
+    \$blockPath = get_template_directory_uri() . "/blocks/" . \$element;
     \$path = "data-blockpath='\$blockPath'";
 
     // ACF fields.
@@ -46,12 +46,13 @@ EOL
             ("block.json")
             read -p "Titel des Blocks: " blockTitle
             read -p "Beschreibung des Blocks: " blockDescription
+            read -p "Kategorie des Blocks (text/media/design): " blockCategory
             cat <<EOL > "$blockName/$file"
 {
     "name": "acf/$blockName",
     "title": "$blockTitle",
     "description": "$blockDescription",
-    "category": "design",
+    "category": "$blockCategory",
     "icon": {
         "background": "#670229",
         "foreground": "#fff",
@@ -86,10 +87,9 @@ EOL
     fi
 done
 # Erstellen von weiteren Dateien
-read -r -p "Möchtest du style.css und script.js hinzufügen? [y/N] " response
+read -r -p "Möchtest du script.js hinzufügen? [y/N] " response
 case "$response" in
     ([yY][eE][sS]|[yY]) 
-        touch "$blockName/style.sass"
         touch "$blockName/script.js"
         ;;
     (*)
