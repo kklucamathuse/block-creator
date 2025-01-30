@@ -35,7 +35,7 @@ This script simplifies Advanced Custom Fields (ACF) Pro block creation by genera
     Bash
     
     ```
-    git clone https://github.com/your-username/block-creator.git
+    git clone https://github.com/kk-lucamathuse/block-creator.git
     ```
     
 4.  **Make the script executable:**
@@ -49,7 +49,7 @@ This script simplifies Advanced Custom Fields (ACF) Pro block creation by genera
 
 ### Usage
 
-1.  **Place the script:** Put `block-creator.sh` and `file_templates.json` in the root directory of your ACF project, where your `blocks` directory is located.
+1.  **Place the script:** Put `block-creator.sh` and `file_templates.json` in the blocks directory of the theme.
 
 2.  **Run the script:**
 
