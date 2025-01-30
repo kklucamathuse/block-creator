@@ -62,8 +62,6 @@ This script simplifies Advanced Custom Fields (ACF) Pro block creation by genera
 The script will create a new directory for the block within your `blocks` directory and populate it with the necessary files (`block.json` and `template.php`) filled with boilerplate content.
 
 ### Example
-
-Directory
  - blocks
 	 - test-block
 		 - block.json
