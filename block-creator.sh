@@ -32,13 +32,11 @@ create_file() {
 
 # Append content to the files
 append_file() {
-    template_php=$(jq -r '.["template.php"] | fromjson?' file_templates.json)
+    template_php=$(jq -r '.["template.php"]' file_templates.json)
     block_json=$(jq '.["block.json"]' file_templates.json)
 
     # Replace placeholders using jq
     block_json=$(jq -r '. | gsub("{{blockName}}"; "'"$blockName"'") | gsub("{{blockTitle}}"; "'"$blockTitle"'") | gsub("{{blockDescription}}"; "'"$blockDescription"'") | gsub("{{blockCategory}}"; "'"$blockCategory"'")' <<< "$block_json")
-
-    template_php=$(jq '. | tojson' <<< "$template_php")
 
     echo "$template_php" > "$blockName/template.php"
     echo "$block_json" > "$blockName/block.json"
