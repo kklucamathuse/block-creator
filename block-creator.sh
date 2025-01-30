@@ -3,7 +3,21 @@ read -p "Name des Blocks: " blockName
 echo "### block.json - config ###"
 read -p "Titel des Blocks: " blockTitle
 read -p "Beschreibung des Blocks: " blockDescription
-read -p "Kategorie des Blocks: " blockCategory
+
+PS3="Wähle die Kategorie des Blocks aus (1-3): "
+while true; do
+    select opt in text design media; do
+        case $opt in
+            text|design|media)
+                blockCategory=$opt
+                break 2
+                ;;
+            *)
+                echo "Ungültige Auswahl $REPLY. Bitte wähle eine der Optionen." >&2
+                ;;
+        esac
+    done
+done
 
 # Create the block directory
 create_directory() {
