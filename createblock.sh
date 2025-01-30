@@ -1,98 +1,50 @@
-#!/usr/bin/env bash
+
+# Get user input
 read -p "Name des Blocks: " blockName
-# create block folder
-if [ ! -d "$blockName" ]; then
-    mkdir "$blockName"
-    chmod 755 "$blockName"
-    echo "Verzeichnis '$blockName' erstellt."
-else
-    echo "Verzeichnis '$blockName' existiert bereits."
-fi
-# create standard files
-files=("template.php" "block.json")
-for file in "${files[@]}"; do
-    if [ ! -f "$blockName/$file" ]; then
-        touch "$blockName/$file"
-        echo "Datei '$file' erstellt."
+echo "### block.json - config ###"
+read -p "Titel des Blocks: " blockTitle
+read -p "Beschreibung des Blocks: " blockDescription
+read -p "Kategorie des Blocks: " blockCategory
 
-        case "$file" in
-            ("template.php")
-                cat <<EOL > "$blockName/$file"
-<?php
-    // Get name of the current element.
-    \$element = basename(__DIR__);
-
-    // Get block ID.
-    \$id = \$block['id'];
-
-    // Path to Block-Element
-    \$blockPath = get_template_directory_uri() . "/blocks/" . \$element;
-    \$path = "data-blockpath='\$blockPath'";
-
-    // ACF fields.
-    
-
-    // Classes.
-    \$kkBlock = " block-" . \$element;
-    \$classes = \$kkBlock;
-
-    // Show block-preview in Gutenberg Editor.
-    if (isset(\$block['data']['block-preview'])) { ?>
-        <img src="<?php echo \$blockPath . str_replace("file:.", "", \$block['data']['block-preview']); ?>" />
-    <?php } else { }
-?>
-EOL
-                ;;
-            ("block.json")
-            read -p "Titel des Blocks: " blockTitle
-            read -p "Beschreibung des Blocks: " blockDescription
-            read -p "Kategorie des Blocks (text/media/design): " blockCategory
-            cat <<EOL > "$blockName/$file"
-{
-    "name": "acf/$blockName",
-    "title": "$blockTitle",
-    "description": "$blockDescription",
-    "category": "$blockCategory",
-    "icon": {
-        "background": "#670229",
-        "foreground": "#fff",
-        "src": "minus"
-    },
-    "keywords": [
-        "divider",
-        "trenner"
-    ],
-    "acf": {
-        "mode": "edit",
-        "renderTemplate": "template.php"
-    },
-    "supports": {
-        "align": false,
-        "mode": false
-    },
-    "example": {
-        "attributes": {
-            "mode": "preview",
-            "data": {
-                "block-preview": "file:./preview.png"
-            }
-        }
-    }
-}
-EOL
-                ;;
-        esac
+# Create the block directory
+create_directory() {
+    if [ ! -d "$blockName" ]; then
+        mkdir "$blockName"
+        chmod 755 "$blockName"
+        echo "Verzeichnis '$blockName' erstellt"
     else
-        echo "Datei '$file' existiert bereits."
+        echo "Verzeichnis '$blockName' existiert bereits"
+        exit 1
     fi
-done
-# Erstellen von weiteren Dateien
-read -r -p "Möchtest du script.js hinzufügen? [y/N] " response
-case "$response" in
-    ([yY][eE][sS]|[yY]) 
-        touch "$blockName/script.js"
-        ;;
-    (*)
-        echo "Prozess beendet"
-        ;;
-esac
+}
+
+# Create the files within the directory
+create_file() {
+    jq -r 'keys[] as $key | $key' file_templates.json | while read -r key; do
+        if [ ! -f "$blockName/$key" ]; then
+            touch "$blockName/$key"
+            echo "Datei '$key' erstellt"
+        else
+            echo "Datei '$key' existiert bereits"
+            continue
+        fi
+    done
+}
+
+# Append content to the files
+append_file() {
+    # templates=$("./file_templates.json")
+    template_php=$(jq -r '.["template.php"]' file_templates.json)
+    block_json=$(jq -r '.["block.json"]' file_templates.json)
+
+    # Replace placeholders using jq
+    # block_json=$(jq '.["block.json"] | gsub("{{blockName}}"; "testName"))
+
+    echo "$template_php" > "$blockName/template.php"
+    echo "$block_json" > "$blockName/block.json"
+}
+
+# Call functions
+create_directory
+create_file
+append_file
